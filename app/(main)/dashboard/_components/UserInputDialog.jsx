@@ -17,12 +17,15 @@ import { DialogClose } from '@radix-ui/react-dialog';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { LoaderCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 function UserInputDialog({ children, coachingOption }) {
   const [selectedExpert, setSelectedExpert] = useState(null);
   const [topic, setTopic] = useState('');
   const [loading, setLoading] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
 
+const router=useRouter();
   const createDiscussionRoom = useMutation(api.DiscussionRoom.CreateNewRoom);
 
   const OnClickNext = async () => {
@@ -33,6 +36,8 @@ function UserInputDialog({ children, coachingOption }) {
         coachingOption: coachingOption?.name,
         expertName: selectedExpert,
       });
+      router.push('/discussion-room/' + result);
+
       console.log('Room created:', result);
     } catch (err) {
       console.error('Failed to create room:', err);
@@ -42,7 +47,7 @@ function UserInputDialog({ children, coachingOption }) {
   };
 
   return (
-    <Dialog>
+    <Dialog open={openDialog} onOpenChange={setOpenDialog}>
       <DialogTrigger>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
